@@ -1,0 +1,35 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model LaptopModel {
+  id             Int            @id @default(autoincrement())
+  createdAt      DateTime       @default(now())
+  selfId         Int            @unique   // Уникальный идентификатор из API
+  notebName      String
+  name           String
+  extraName      String?        // Дополнительные детали имени
+  submodelInfo   Json           // JSON массив подмодельных данных
+  launchDate     DateTime?      // Дата выпуска
+  resources      ModelResource[]
+
+  @@unique([notebName, name, extraName])
+}
+
+model ModelResource {
+  id             Int            @id @default(autoincrement())
+  createdAt      DateTime       @default(now())
+  laptopModelId  Int
+  laptopModel    LaptopModel    @relation(fields: [laptopModelId], references: [id])
+  thumbnail      String?
+  images         Json           // JSON array of image URLs
+  officialLink   String?
+  officialLink2  String?
+  launchDate     DateTime
+  primaryModel   Int
+}
